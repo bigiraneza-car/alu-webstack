@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+#world wide web
+#Displays DNS record type and destination for subdomains of a given domain
+
+display_info() {
+	local domain=$1
+	local subdomain=$2
+
+	dig "$subdomain.$domain" | awk -v s="$subdomain" '
+	     /ANSWER SECTION:/ {
+	     	getline
+		print "The subdomain " s " is a " $4 " record and points to " $5
+	}'
+
+}
+
+if [ $# -eq 1 ]; then
+	for sub in www lb-01 web-01 web-02; do
+		display_info $1 $sub
+	done
+else
+	display_info $1 $2
+fi
